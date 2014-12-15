@@ -200,7 +200,8 @@ int main(int argc, char ** argv) {
 		if (num < 0) {
 			num = 0;
 		}
-		long l = calculateNewRGB(h, s, v, num);
+		float mult = num / 1.5f;
+		long l = RGB(min(r * mult, 255), min(g * mult, 255), min(b * mult, 255));
 
 		//cout << num << endl;
 
