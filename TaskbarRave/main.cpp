@@ -37,6 +37,10 @@ DWORD CALLBACK WasapiProc(void *buffer, DWORD length, void *user)
 
 int main(int argc, char ** argv) {
 
+	cout << "Press enter to start.." << endl;
+
+	cin.ignore();
+	
 	cout << "Loading dwmapi.dll.." << endl;
 	HMODULE hDwmDLL = LoadLibrary(_T("dwmapi.dll")); // Loads the DWM DLL
 	if (!hDwmDLL)
@@ -119,7 +123,7 @@ int main(int argc, char ** argv) {
 		if (num < 0) {
 			num = 0;
 		}
-		float mult = num / 1.5f;
+		float mult = num / 1.f;
 		long l = RGB(min(r * mult, 255), min(g * mult, 255), min(b * mult, 255));
 
 		dwmcolor.clrColor = l;
