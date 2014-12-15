@@ -35,84 +35,6 @@ DWORD CALLBACK WasapiProc(void *buffer, DWORD length, void *user)
 	return TRUE; //We're not doing anything..
 }
 
-void rgb2hsv(float r, float g, float b, float &h, float &s, float &v) {
-	float K = 0.f;
-
-	if (g < b)
-	{
-		swap(g, b);
-		K = -1.f;
-	}
-
-	if (r < g)
-	{
-		swap(r, g);
-		K = -2.f / 6.f - K;
-	}
-
-	float chroma = r - min(g, b);
-	h = fabs(K + (g - b) / (6.f * chroma + 1e-20f));
-	s = chroma / (r + 1e-20f);
-	v = r;
-}
-
-long calculateNewRGB(float h, float s, float v, float num) {
-
-	num = num / 1.5;
-
-	v = (255.f * num);
-
-	float r, g, b;
-
-	int i;
-	float f, p, q, t;
-	if (s == 0) {
-		// achromatic (grey)
-		r = g = b = v;
-		return RGB(r, g, b);
-	}
-	h /= 60;			// sector 0 to 5
-	i = floor(h);
-	f = h - i;			// factorial part of h
-	p = v * (1 - s);
-	q = v * (1 - s * f);
-	t = v * (1 - s * (1 - f));
-	switch (i) {
-	case 0:
-		r = v;
-		g = t;
-		b = p;
-		break;
-	case 1:
-		r = q;
-		g = v;
-		b = p;
-		break;
-	case 2:
-		r = p;
-		g = v;
-		b = t;
-		break;
-	case 3:
-		r = p;
-		g = q;
-		b = v;
-		break;
-	case 4:
-		r = t;
-		g = p;
-		b = v;
-		break;
-	default:		// case 5:
-		r = v;
-		g = p;
-		b = q;
-		break;
-	}
-
-	return RGB(r, g, b);
-}
-
 int main(int argc, char ** argv) {
 
 	cout << "Loading dwmapi.dll.." << endl;
@@ -150,9 +72,6 @@ int main(int argc, char ** argv) {
 	float r = GetRValue(dwmcolor.clrColor);
 	float g = GetGValue(dwmcolor.clrColor);
 	float b = GetBValue(dwmcolor.clrColor);
-
-	float h, s, v;
-	rgb2hsv(r, g, b, h, s, v);
 
 	cout << "Looking for loopback device.." << endl;
 	// find the loopback device for the default output
@@ -202,8 +121,6 @@ int main(int argc, char ** argv) {
 		}
 		float mult = num / 1.5f;
 		long l = RGB(min(r * mult, 255), min(g * mult, 255), min(b * mult, 255));
-
-		//cout << num << endl;
 
 		dwmcolor.clrColor = l;
 		DwmSetColorizationParameters(&dwmcolor, 0);
